@@ -1,20 +1,34 @@
-#NAME THE PIPELINE SAME AS FILE (WITHOUT ".yml")
+# NAME THE PIPELINE SAME AS FILE (WITHOUT ".yml")
+# Good practice: pipeline name = YAML file name
+
 # trigger:
 # - main
+# Automatic trigger on push to main (disabled here for demo purposes)
 
 resources:
   repositories:
     - repository: self
+      # Use current repository
       trigger: none
+      # Disable automatic triggers
 
 stages:
+# Define stages of the pipeline
 - stage: Build
   displayName: Build .Net Core Solution
+
   jobs:
+  # A job runs on an agent
   - job: Build
+
     pool:
       vmImage: ubuntu-latest
+      # Microsoft-hosted agent (Linux)
+
     steps:
+    # Steps are executed sequentially
+
+    # Restore NuGet dependencies
     - task: DotNetCoreCLI@2
       displayName: Restore
       inputs:
@@ -22,34 +36,39 @@ stages:
         projects: '**/*.sln'
         feedsToUse: 'select'
 
+    # Build the application
     - task: DotNetCoreCLI@2
       displayName: Build
       inputs:
         command: 'build'
         projects: '**/*.sln'
-    
+
+    # Run unit tests
     - task: DotNetCoreCLI@2
       displayName: Test
       inputs:
         command: 'test'
         projects: 'tests/UnitTests/*.csproj'
-    
+
+    # Publish application (prepare for deployment)
     - task: DotNetCoreCLI@2
       displayName: Publish
       inputs:
         command: 'publish'
         publishWebProjects: true
         arguments: '-o $(Build.ArtifactStagingDirectory)'
-    
+
+    # Publish application artifact
     - task: PublishPipelineArtifact@1
-      displayName: Publish Artifacts ADO - Website
+      displayName: Publish Artifacts - Website
       inputs:
         targetPath: '$(Build.ArtifactStagingDirectory)'
         artifact: 'Website'
         publishLocation: 'pipeline'
 
+    # Publish infrastructure artifact (Bicep file)
     - task: PublishPipelineArtifact@1
-      displayName: Publish Artifacts ADO - Bicep
+      displayName: Publish Artifacts - Bicep
       inputs:
         targetPath: '$(Build.SourcesDirectory)/infra/webapp.bicep'
         artifact: 'Bicep'

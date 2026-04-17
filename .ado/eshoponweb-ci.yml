@@ -1,9 +1,15 @@
 # NAME THE PIPELINE SAME AS FILE (WITHOUT ".yml")
 # Good practice: pipeline name = YAML file name
 
-# trigger:
-# - main
-# Automatic trigger on push to main (disabled here for demo purposes)
+#trigger:
+#  branches:
+#    include:
+#      - main
+#  paths:
+#    include:
+#      - src/**
+# Automatic trigger on push to main (disabled here for first demo purposes)
+
 
 resources:
   repositories:

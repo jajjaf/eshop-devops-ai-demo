@@ -1,5 +1,5 @@
-# NAME THE PIPELINE SAME AS FILE (WITHOUT ".yml")
-# Good practice: pipeline name = YAML file name
+# NOMMER LE PIPELINE COMME LE FICHIER (SANS ".yml")
+# Bonne pratique : le nom du pipeline = nom du fichier YAML
 
 trigger:
   branches:
@@ -8,72 +8,76 @@ trigger:
   paths:
     include:
       - src/**
-# Automatic trigger on push to main (disabled here for first demo purposes)
-
-
-resources:
-  repositories:
-    - repository: self
-      # Use current repository
-      trigger: none
-      # Disable automatic triggers
+# Déclenchement automatique à chaque push sur la branche main
+# (ici filtré uniquement sur les modifications dans le dossier src)
 
 stages:
-# Define stages of the pipeline
+# Définition des différentes étapes du pipeline
+
 - stage: Build
-  displayName: Build .Net Core Solution
+  displayName: Build de la solution .NET Core
 
   jobs:
-  # A job runs on an agent
+  # Un job s'exécute sur un agent
+
   - job: Build
 
     pool:
       vmImage: ubuntu-latest
-      # Microsoft-hosted agent (Linux)
+      # Agent hébergé par Microsoft (Linux)
 
     steps:
-    # Steps are executed sequentially
+    # Les étapes sont exécutées séquentiellement
 
-    # Restore NuGet dependencies
+    # Restauration des dépendances NuGet
     - task: DotNetCoreCLI@2
-      displayName: Restore
+      displayName: Restauration
       inputs:
         command: 'restore'
         projects: '**/*.sln'
         feedsToUse: 'select'
 
-    # Build the application
+    # Compilation de l’application
     - task: DotNetCoreCLI@2
       displayName: Build
       inputs:
         command: 'build'
-        projects: '**/*.sln'  # Path to the projects to build
-                              # **/*.sln means: all solution files in the repository
-                              # This ensures the entire application is built
+        projects: '**/*.sln'
+        # **/*.sln signifie : tous les fichiers solution du dépôt
+        # Cela permet de construire toute l'application
 
-    # Run unit tests
+    # Exécution des tests unitaires
     - task: DotNetCoreCLI@2
-      displayName: Test
+      displayName: Tests
       inputs:
         command: 'test'
-        projects: 'tests/UnitTests/*.csproj'   # Path to the test projects
-                                                # tests/UnitTests/*.csproj means: all test project files in this folder
-                                                # Only unit tests will be executed here
+        projects: 'tests/UnitTests/*.csproj'
+        # Tous les projets de tests unitaires dans ce dossier
+        # Seuls les tests unitaires sont exécutés ici
 
-    # Publish application (prepare for deployment)
+    # Publication de l’application (préparation au déploiement)
     - task: DotNetCoreCLI@2
-      displayName: Publish
+      displayName: Publication
       inputs:
-        command: 'publish'       # → Prepares the application for deployment (compiles + packages output)
-        publishWebProjects: true # Automatically targets all web projects in the solution
-                                 # Ensures only deployable web apps are published
-        arguments: '-o $(Build.ArtifactStagingDirectory)'  # Output directory for the published files
-                                                           # $(Build.ArtifactStagingDirectory) is a temporary folder used to store artifacts
+        command: 'publish'
+        # Prépare l’application pour le déploiement (compilation + packaging)
 
-    # Publish application artifact
+        publishWebProjects: true
+        # Cible automatiquement les projets web déployables
+
+        arguments: '-o $(Build.ArtifactStagingDirectory)'
+        # Dossier de sortie pour les fichiers générés
+        # $(Build.ArtifactStagingDirectory) = dossier temporaire pour stocker les artefacts
+
+    # Publication des artefacts du pipeline
     - task: PublishPipelineArtifact@1
-      displayName: Publish Artifacts - Website
+      displayName: Publication des artefacts - Site Web
       inputs:
-        targetPath: '$(Build.ArtifactStagingDirectory)'  # Path of the files to publish , $(Build.ArtifactStagingDirectory) contains the output from the publish step
-        artifact: 'Website'                              # This is how the artifact will be referenced in later stages
-        publishLocation: 'pipeline'                      # Location where the artifact will be stored , 'pipeline' means it will be stored within Azure DevOps pipeline storage
+        targetPath: '$(Build.ArtifactStagingDirectory)'
+        # Chemin des fichiers à publier (issus de l'étape précédente)
+
+        artifact: 'Website'
+        # Nom de l’artefact utilisé dans les étapes suivantes
+
+        publishLocation: 'pipeline'
+        # Stockage dans Azure DevOps (au niveau du pipeline)

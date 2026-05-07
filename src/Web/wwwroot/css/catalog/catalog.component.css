@@ -113,3 +113,61 @@
   text-align: center; }
   .esh-catalog-price::before {
     content: '$'; }
+/* AI Assistant Banner */
+.esh-ai-assistant-banner {
+  background: linear-gradient(135deg, #FFE5E5 0%, #FFEAEA 100%);
+  padding: 2.5rem 0;
+  margin: 1.5rem 0;
+  border-top: 3px solid #E74C3C;
+  border-bottom: 1px solid #FADBD8; }
+
+.esh-ai-assistant-content {
+  text-align: center;
+  padding: 0 1rem; }
+
+.esh-ai-assistant-title {
+  color: #C0392B;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+  text-transform: uppercase;
+  letter-spacing: 1px; }
+
+.esh-ai-assistant-description {
+  color: #555555;
+  font-size: 1rem;
+  font-weight: 300;
+  margin: 0 0 1.5rem 0;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6; }
+
+.esh-ai-assistant-button {
+  background-color: #E74C3C;
+  color: #FFFFFF;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.75rem 2rem;
+  text-transform: uppercase;
+  transition: all 0.35s;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.2); }
+  .esh-ai-assistant-button:hover {
+    background-color: #C0392B;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+    transition: all 0.35s; }
+  .esh-ai-assistant-button:active {
+    transform: translateY(0); }
+
+@media screen and (max-width: 768px) {
+  .esh-ai-assistant-title {
+    font-size: 1.5rem; }
+  .esh-ai-assistant-description {
+    font-size: 0.9rem; }
+  .esh-ai-assistant-button {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem; } }
